@@ -15,9 +15,9 @@ import jakarta.validation.Valid;
 import com.saif.question_service.Service.QuestionService;
 import com.saif.question_service.Model.Question;
 import com.saif.question_service.Model.QuestionWrapper;
-import com.saif.question_service.Model.Response;
 import java.util.List;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.core.env.Environment;
 
 @RestController
 @RequestMapping("/question")
@@ -25,6 +25,10 @@ public class QuestionController {
 
     @Autowired
     private QuestionService questionService;
+
+    //for load balancing
+    @Autowired
+    Environment environment;
 
     @GetMapping("/allQuestions")
     public ResponseEntity<List<Question>> getAllQuestions() {
@@ -56,11 +60,7 @@ public class QuestionController {
 
     @PostMapping("/getQuestions")
     public ResponseEntity<List<QuestionWrapper>> getQuestions(@RequestBody List<Integer> questionIds) {
+        System.out.println(environment.getProperty("local.server.port"));
         return questionService.getQuestionsFromId(questionIds);
-    }
-
-    @PostMapping("/getScore")
-    public ResponseEntity<Integer> getScore(@RequestBody List<Response> responses) {
-        return questionService.getScore(responses);
     }
 }
